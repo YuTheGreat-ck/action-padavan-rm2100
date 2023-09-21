@@ -22,9 +22,9 @@ jobs:
       run: |
         git clone --depth=1 $REPO_URL -b $REPO_BRANCH /opt/rt-n56u
 
-    - name: Customize config
+    - name: Copy config
       run: |
-        mv -f $TNAME.config /opt/rt-n56u/trunk/configs/templates/$TNAME.config
+        cp $TNAME.config /opt/rt-n56u/trunk/.config
 
     - name: Prepare environment
       run: |

@@ -42,7 +42,7 @@ jobs:
     - name: Start build
       run: |
         cd /opt/rt-n56u/trunk
-        fakeroot ./build_firmware_modify $TNAME
+        fakeroot ./build_firmware_modify $TNAME 0
 
     - name: Set release date
       run: |

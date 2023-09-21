@@ -1,0 +1,59 @@
+name: build
+
+on:
+  workflow_dispatch:
+
+env:
+  REPO_URL: https://github.com/MeIsReallyBa/padavan-4.4
+  REPO_BRANCH: main
+  TNAME: RM2100
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Clone source
+      run: |
+        git clone --depth=1 $REPO_URL -b $REPO_BRANCH /opt/rt-n56u
+
+    - name: Copy config
+      run: |
+        cp $TNAME.config /opt/rt-n56u/trunk/configs/templates/$TNAME.config
+
+    - name: Prepare environment
+      run: |
+        sudo apt update
+        sudo apt install libtool-bin gperf python3-docutils autopoint gettext
+
+    - name: Run shellcheck
+      run: sh ./trunk/tools/shellcheck.sh
+
+    - name: Prepare toolchain
+      run: |
+        cd /opt/rt-n56u/toolchain-mipsel
+        sh dl_toolchain.sh
+
+    - name: Start build
+      run: |
+        cd /opt/rt-n56u/trunk
+        fakeroot ./build_firmware_modify $TNAME
+
+    - name: Upload images to artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.TNAME }}.trx
+        path: /opt/rt-n56u/trunk/images/${{ env.TNAME }}.trx
+
+    - name: Set release date
+      run: |
+        echo "RELEASE_DATE=$(date +'%Y%m%d')" >> ${GITHUB_ENV}
+
+    - name: Upload firmware to release
+      uses: softprops/action-gh-release@v1
+      with:
+       tag_name: ${{ env.RELEASE_DATE }}
+       files: |
+        /opt/rt-n56u/trunk/images/${{ env.TNAME }}.trx

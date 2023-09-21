@@ -41,19 +41,19 @@ jobs:
         cd /opt/rt-n56u/trunk
         fakeroot ./build_firmware_modify $TNAME
 
-    - name: Upload images to artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{ env.TNAME }}.trx
-        path: /opt/rt-n56u/trunk/images/${{ env.TNAME }}.trx
-
     - name: Set release date
       run: |
         echo "RELEASE_DATE=$(date +'%Y%m%d')" >> ${GITHUB_ENV}
 
-    - name: Upload firmware to release
+    - name: Upload image to artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.TNAME }}_${{ env.RELEASE_DATE }}
+        path: /opt/rt-n56u/trunk/images
+
+    - name: Upload image to release
       uses: softprops/action-gh-release@v1
       with:
-       tag_name: ${{ env.RELEASE_DATE }}
+       tag_name: ${{ env.TNAME }}_${{ env.RELEASE_DATE }}
        files: |
-        /opt/rt-n56u/trunk/images/${{ env.TNAME }}.trx
+        /opt/rt-n56u/trunk/images/*.trx

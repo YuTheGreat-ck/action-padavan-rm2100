@@ -29,7 +29,7 @@ jobs:
         sudo apt install libtool-bin gperf python3-docutils autopoint gettext
 
     - name: Run shellcheck
-      run: sh ./trunk/tools/shellcheck.sh
+      run: sh /opt/rt-n56u/trunk/tools/shellcheck.sh
 
     - name: Prepare toolchain
       run: |

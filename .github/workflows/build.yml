@@ -24,9 +24,13 @@ jobs:
 
     - name: Update V2Ray
       run: |
+        curl -o v2ray.zip -L https://github.com/v2fly/v2ray-core/releases/download/v4.45.2/v2ray-linux-mips32le.zip
         rm /opt/rt-n56u/trunk/user/v2ray/v2ray
-        curl -o /opt/rt-n56u/trunk/user/v2ray/v2ray.zip -L https://github.com/v2fly/v2ray-core/releases/download/v4.45.2/v2ray-linux-mips32le.zip
-        unzip /opt/rt-n56u/trunk/user/v2ray/v2ray.zip -d /opt/rt-n56u/trunk/user/v2ray v2ray
+        unzip v2ray.zip -d /opt/rt-n56u/trunk/user/v2ray v2ray
+
+    - name: Patch Makefile
+      run: |
+        sed -i 's/ifeq ($(CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS),y)/ifeq (y,y)/' /opt/rt-n56u/trunk/user/Makefile
 
     - name: Copy config
       run: |
